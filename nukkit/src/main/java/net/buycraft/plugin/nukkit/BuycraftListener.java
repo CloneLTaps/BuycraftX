@@ -1,12 +1,12 @@
 package net.buycraft.plugin.nukkit;
 
+import cn.nukkit.Player;
 import cn.nukkit.event.EventHandler;
 import cn.nukkit.event.Listener;
 import cn.nukkit.event.player.PlayerJoinEvent;
 import cn.nukkit.event.player.PlayerQuitEvent;
 import net.buycraft.plugin.data.QueuedPlayer;
 import net.buycraft.plugin.data.ServerEvent;
-
 import java.util.Date;
 
 public class BuycraftListener implements Listener {
@@ -18,14 +18,16 @@ public class BuycraftListener implements Listener {
 
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent event) {
-        if (plugin.getApiClient() == null) {
+        final Player player = event.getPlayer();
+
+        if (plugin.getApiClient() == null || player.getAddress() == null) {
             return;
         }
 
         plugin.getServerEventSenderTask().queueEvent(new ServerEvent(
-                event.getPlayer().getUniqueId().toString().replace("-", ""),
-                event.getPlayer().getName(),
-                event.getPlayer().getAddress(),
+                player.getUniqueId().toString().replace("-", ""),
+                player.getName(),
+                player.getAddress(),
                 ServerEvent.JOIN_EVENT,
                 new Date()
         ));
@@ -38,14 +40,16 @@ public class BuycraftListener implements Listener {
 
     @EventHandler
     public void onPlayerQuit(PlayerQuitEvent event) {
-        if (plugin.getApiClient() == null) {
+        final Player player = event.getPlayer();
+
+        if (plugin.getApiClient() == null || player.getAddress() == null) {
             return;
         }
 
         plugin.getServerEventSenderTask().queueEvent(new ServerEvent(
-                event.getPlayer().getUniqueId().toString().replace("-", ""),
-                event.getPlayer().getName(),
-                event.getPlayer().getAddress(),
+                player.getUniqueId().toString().replace("-", ""),
+                player.getName(),
+                player.getAddress(),
                 ServerEvent.LEAVE_EVENT,
                 new Date()
         ));

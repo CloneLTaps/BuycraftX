@@ -2,13 +2,13 @@ package net.buycraft.plugin.bukkit;
 
 import net.buycraft.plugin.data.QueuedPlayer;
 import net.buycraft.plugin.data.ServerEvent;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
-
 import java.util.Date;
 
 public class BuycraftListener implements Listener {
@@ -20,14 +20,16 @@ public class BuycraftListener implements Listener {
 
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent event) {
-        if (plugin.getApiClient() == null) {
+        final Player player = event.getPlayer();
+
+        if (plugin.getApiClient() == null || player.getAddress() == null) {
             return;
         }
 
         plugin.getServerEventSenderTask().queueEvent(new ServerEvent(
-                event.getPlayer().getUniqueId().toString().replace("-", ""),
-                event.getPlayer().getName(),
-                event.getPlayer().getAddress().getAddress().getHostAddress(),
+                player.getUniqueId().toString().replace("-", ""),
+                player.getName(),
+                player.getAddress().getAddress().getHostAddress(),
                 ServerEvent.JOIN_EVENT,
                 new Date()
         ));
@@ -53,14 +55,16 @@ public class BuycraftListener implements Listener {
 
     @EventHandler(ignoreCancelled = true)
     public void onPlayerQuit(PlayerQuitEvent event) {
-        if (plugin.getApiClient() == null) {
+        final Player player = event.getPlayer();
+
+        if (plugin.getApiClient() == null || player.getAddress() == null) {
             return;
         }
 
         plugin.getServerEventSenderTask().queueEvent(new ServerEvent(
-                event.getPlayer().getUniqueId().toString().replace("-", ""),
-                event.getPlayer().getName(),
-                event.getPlayer().getAddress().getAddress().getHostAddress(),
+                player.getUniqueId().toString().replace("-", ""),
+                player.getName(),
+                player.getAddress().getAddress().getHostAddress(),
                 ServerEvent.LEAVE_EVENT,
                 new Date()
         ));

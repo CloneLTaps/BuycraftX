@@ -9,6 +9,7 @@ import com.velocitypowered.api.event.proxy.ProxyInitializeEvent;
 import com.velocitypowered.api.event.proxy.ProxyShutdownEvent;
 import com.velocitypowered.api.plugin.Plugin;
 import com.velocitypowered.api.plugin.annotation.DataDirectory;
+import com.velocitypowered.api.proxy.Player;
 import com.velocitypowered.api.proxy.ProxyServer;
 import net.buycraft.plugin.BuyCraftAPI;
 import net.buycraft.plugin.IBuycraftPlatform;
@@ -210,14 +211,16 @@ public class BuycraftPlugin {
 
     @Subscribe
     public void onPostLogin(PostLoginEvent event) {
-        if (getApiClient() == null) {
+        final Player player = event.getPlayer();
+
+        if (getApiClient() == null || player.getRemoteAddress() == null || player.getRemoteAddress().getAddress() == null) {
             return;
         }
 
         serverEventSenderTask.queueEvent(new ServerEvent(
-                event.getPlayer().getUniqueId().toString().replace("-", ""),
-                event.getPlayer().getUsername(),
-                event.getPlayer().getRemoteAddress().getAddress().getHostAddress(),
+                player.getUniqueId().toString().replace("-", ""),
+                player.getUsername(),
+                player.getRemoteAddress().getAddress().getHostAddress(),
                 ServerEvent.JOIN_EVENT,
                 new Date()
         ));
@@ -230,14 +233,16 @@ public class BuycraftPlugin {
 
     @Subscribe
     public void onQuit(DisconnectEvent event) {
-        if (getApiClient() == null) {
+        final Player player = event.getPlayer();
+
+        if (getApiClient() == null || player.getRemoteAddress() == null || player.getRemoteAddress().getAddress() == null) {
             return;
         }
 
         serverEventSenderTask.queueEvent(new ServerEvent(
-                event.getPlayer().getUniqueId().toString().replace("-", ""),
-                event.getPlayer().getUsername(),
-                event.getPlayer().getRemoteAddress().getAddress().getHostAddress(),
+                player.getUniqueId().toString().replace("-", ""),
+                player.getUsername(),
+                player.getRemoteAddress().getAddress().getHostAddress(),
                 ServerEvent.LEAVE_EVENT,
                 new Date()
         ));
